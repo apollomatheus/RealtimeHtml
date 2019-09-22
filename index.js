@@ -91,6 +91,11 @@ realtime_plugin.getData(function(data){
       if (f.slice(-5)=='.html') {
         load_viewer(f);
         return true;
+      } else {
+        new Notification({
+          title:'Invalid file',
+          content: 'Please open an .html file'
+        });
       }
     }
     return false;
