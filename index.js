@@ -12,7 +12,7 @@ realtime_plugin.createData({});
 
 realtime_plugin.getData(function(data){
   var toggle_viewer, hide_viewer, show_viewer, reload_viewer,
-      open_watcher,
+      open_watcher, reload_viewer,
       watcher;
   
   realtime_menu.setList({
@@ -27,6 +27,7 @@ realtime_plugin.getData(function(data){
        "Reload viewer":{
     	  id:"realtime-html-l",
           click:function() {
+            //do not use reload_viewer
             if (toggle_viewer) {
               toggle_viewer();
               toggle_viewer();
@@ -49,7 +50,22 @@ realtime_plugin.getData(function(data){
       if (throwError) console.error(e);
     }
   };
-  
+  reload_viewer = function () {
+    var viewer = document.getElementById('realtime_viewer');
+    var parent = viewer?viewer.parentNode:null;
+    if (viewer) {
+      viewer.parentNode.removeChild(viewer);
+    }
+    if (parent) {
+        parent.style.opacity = 0;
+        viewer = document.createElement('frame');
+        viewer.id = 'realtime_viewer';
+        viewer.className = 'html-viewer';
+        viewer.src = filepath;
+        parent.appendChild(viewer);
+        parent.style.opacity = 1;
+    }
+  };
   show_viewer = function () {
     var file = filepath;
     if (!file) return false;
@@ -60,13 +76,8 @@ realtime_plugin.getData(function(data){
         var content = document.getElementById('content_app');
         if (!content) return false;
         viewer.id = 'realtime_viewer';
-        viewer.src = file;
-        viewer.style.width = '240px';
-        viewer.style.height = '100%';
-        viewer.style.right='true';
-        viewer.style.backgroundColor = 'white';
-        viewer.style.color='black';
         viewer.className = 'html-viewer';
+        viewer.src = file;
         fset.className = 'frameset-viewer';
         fset.appendChild(viewer)
         content.appendChild(fset);
@@ -92,7 +103,7 @@ realtime_plugin.getData(function(data){
         if (data.path != filepath) {
             var open=false;
             try {
-              for(t in tabs) { 
+              for(var t in tabs) { 
                 if (data.path == tabs[t].attributes.getNamedItem('longpath').value) {
                   open = true;
                   break;
@@ -104,8 +115,10 @@ realtime_plugin.getData(function(data){
               hide_viewer();
               clearInterval(watcher);
             }
+         } else {
+           reload_viewer();
          }
-    },1000);
+    },1500);
   };
                               
   toggle_viewer = function () {
