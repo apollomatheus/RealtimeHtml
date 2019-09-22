@@ -1,0 +1,19 @@
+.frameset-viewer {
+    min-width: 15%;
+    width: 300px;
+    max-width: 70%;
+    right: 0;
+    height: 100%;
+    overflow: auto;
+    font-size: 12px;
+    color: black;
+    background-color: white;
+    -webkit-user-select: none;
+    float: right;
+    direction: ltr;
+}
+.html-viewer {
+  min-width: 300px;
+  width: auto;
+  height: 100%;
+}

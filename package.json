@@ -3,5 +3,6 @@
   "version": "0.0.21",
   "description": "Plugin to view HTML in realtime.",
   "author": "Apollo",
-  "main":"index.js"
+  "main":"index.js",
+  "css":["main.css"]
 }

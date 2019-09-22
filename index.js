@@ -12,6 +12,7 @@ realtime_plugin.createData({});
 
 realtime_plugin.getData(function(data){
   var toggle_viewer, hide_viewer, show_viewer, reload_viewer,
+      open_watcher,
       watcher;
   
   realtime_menu.setList({
@@ -26,8 +27,10 @@ realtime_plugin.getData(function(data){
        "Reload viewer":{
     	  id:"realtime-html-l",
           click:function() {
-            toggle_viewer();
-            toggle_viewer();
+            if (toggle_viewer) {
+              toggle_viewer();
+              toggle_viewer();
+            }
           }
         },
     }
@@ -61,6 +64,10 @@ realtime_plugin.getData(function(data){
         viewer.style.width = '240px';
         viewer.style.height = '100%';
         viewer.style.right='true';
+        viewer.style.backgroundColor = 'white';
+        viewer.style.color='black';
+        viewer.className = 'html-viewer';
+        fset.className = 'frameset-viewer';
         fset.appendChild(viewer)
         content.appendChild(fset);
         return viewer;
@@ -82,37 +89,37 @@ realtime_plugin.getData(function(data){
   open_watcher = function () {
     clearInterval(watcher);
     watcher = setInterval(function(){
-        realtime_plugin.getData(function(data){
-          if (data.path != filepath) {
+        if (data.path != filepath) {
             var open=false;
-            for(t in tabs) { 
-              if (data.path == tabs[t].attributes.getNamedItem('longpath').value) {
-                open = true;
-                break;
+            try {
+              for(t in tabs) { 
+                if (data.path == tabs[t].attributes.getNamedItem('longpath').value) {
+                  open = true;
+                  break;
+                }
               }
             }
+            catch (e) {}
             if (!open) {
               hide_viewer();
               clearInterval(watcher);
             }
-          }
-       });
+         }
     },1000);
   };
                               
   toggle_viewer = function () {
-      realtime_plugin.getData(function(data){
-      	if (!data.enabled) {
-        	if (show_viewer()) {
-      			realtime_plugin.setData('path',filepath);
-      			realtime_plugin.setData('enabled',true);
-                open_watcher();
-            }
-        } else {
-          hide_viewer();
-          clearInterval(watcher);
-        }
-      });
+    if (!data.enabled) {
+       if (show_viewer()) {
+         realtime_plugin.setData('path',filepath);
+      	 realtime_plugin.setData('enabled',true);
+                
+		 open_watcher();
+       }
+     } else {
+         hide_viewer();
+         clearInterval(watcher);
+     }
   };
   
 });
