@@ -1,24 +1,20 @@
-<div class="body">
-    <h3> Hello World :)! </h3>
-    <button onclick="function hello(){new Notification({title:'hello',content:'hello world'})} hello();">Hello world </button>
-    <style>
-      .body {
-        color: black;
-        background-color: white;
-        width:100%;
-        height:100%;
-      }
-    </style>
-    <script>
-      /** 
-         WARNING --- WARNING -- WARNING
-         Scripts only works if you add them in Developer Console.
-         Do NOT add third-party scripts, IT'S NOT SAFE.
-         Unless you know what you are doing.
-      **/
-      
-      //To work, copy this to Window > Developer Tools.
-      //or add in onclick
-      function hello() {console.log('hello');}
-    </script>
-</div>
+
+<html>
+<body>
+    <h3> Example </h3>
+    <a id="reply"> </a><br>
+    <button onclick="hello();">Click me</button>
+</body>
+<style>
+body {
+   width:100%;
+   height:100%;
+   color: red;
+}
+</style>
+<script>
+function hello() {
+	document.getElementById('reply').innerHTML = 'Hello Real World!';
+}
+</script>
+</html>
