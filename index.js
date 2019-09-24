@@ -19,6 +19,7 @@ realtime_plugin.getData(function(data){
   	realtime_plugin.setData('wasEnabled',(data.enabled && !firstRun));
   	realtime_plugin.setData('enabled',false);
   	realtime_plugin.setData('open',false);
+  	realtime_plugin.setData('screenId',null);
   }
   defaultData(true);
 
@@ -35,20 +36,42 @@ realtime_plugin.getData(function(data){
     }
   };
   
+  // get file screen 
+  const update_screen = function () {
+    var fileScreen = editors.find((item)=> item.path === data.path);
+    if (fileScreen && fileScreen.screen) {
+  		realtime_plugin.setData('screenId',fileScreen.screen);
+      	return true;
+    }
+    return false;
+  }
+  
+  // focus on file screen
+  const focus_screen = function () {
+    if (data.screenId) {
+      graviton.focusScreen(data.screenId);
+      return true;
+    }
+    return false;
+  }
+  
+  // create html viewer tab
   const create_viewer = function () {
     if (!data.open) {
-      viewer = new Tab({
-          id:'html_viewer',
-          type:'free',
-          name:'HTML VIEWER',
-          data:''
-      });
-    };
-    realtime_plugin.setData('open',true);
+      if (focus_screen()) {
+        viewer = new Tab({
+            id:'html_viewer',
+            type:'free',
+            name:'HTML VIEWER',
+            data:''
+        });
+      };
+      realtime_plugin.setData('open',true);
+    }
   };
   
   
-  //manually hide viewer
+  // manually hide viewer
   const hide_viewer = function () {
     try {
     	if (viewer && data.open) {
@@ -60,26 +83,12 @@ realtime_plugin.getData(function(data){
     return false;
   };
   
-    
-  
-  const toggle_viewer = function () {
-    if (!data.enabled) {
-       realtime_plugin.setData('path',filepath);
-       realtime_plugin.setData('enabled',true);
-       if (show_viewer(data.path)) {
-         console.log('HTML_VIEWER::Opening file => ',data.path);
-         return;
-       } 
-    }
-    hide_viewer();
-  };
-  
   const show_viewer = function (f) {
     if (!f) return false;
     if (f.length > 5) {
       if (f.slice(-5)=='.html') {
         create_viewer();
-        viewer.setData('<iframe src="'+f.split('\\').join('/')+'"></iframe>');
+        viewer.setData('<iframe src="'+f+'"></iframe>');
         loadTab(document.getElementById('html_viewer_freeTab'));
         return true;
       } else {
@@ -92,10 +101,28 @@ realtime_plugin.getData(function(data){
     return false;
   };
   
+  const toggle_viewer = function () {
+    if (!data.enabled) {
+       realtime_plugin.setData('path',filepath);
+       realtime_plugin.setData('enabled',true);
+       if (update_screen()) {
+         if (show_viewer(data.path)) {
+           return;
+         }
+       } else {
+        new Notification({
+          title:'Invalid screen',
+          content: 'Please an valid screen'
+        });
+       }
+    }
+    hide_viewer();
+  };
+  
+  
   document.addEventListener("file_saved",function(e){
         if (filepath != data.path) return;
         if (data.wasEnabled && !data.enabled) {
-         	 console.log('HTML_VIEWER::File closed?');
              hide_viewer();
          } else {
            show_viewer(data.path);
@@ -106,7 +133,6 @@ realtime_plugin.getData(function(data){
       if (e.detail.tab.id=='html_viewer_freeTab') {
         defaultData();
       } else if (e.detail.tab.longpath==data.path && data.path) {
-        console.log('HTML_VIEWER::File closed?');
         hide_viewer();
         defaultData(true);
       }
