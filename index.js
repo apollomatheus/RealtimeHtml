@@ -38,7 +38,7 @@ realtime_plugin.getData(function(data){
   
   // get file screen 
   const update_screen = function () {
-    var fileScreen = editors.find((item)=> item.path === data.path);
+    var fileScreen = graviton.getCurrentEditor();
     if (fileScreen && fileScreen.screen) {
   		realtime_plugin.setData('screenId',fileScreen.screen);
       	return true;
