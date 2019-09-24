@@ -87,9 +87,10 @@ realtime_plugin.getData(function(data){
     if (!f) return false;
     if (f.length > 5) {
       if (f.slice(-5)=='.html') {
+        var isnew = viewer==null;
         create_viewer();
         viewer.setData('<iframe src="'+f+'"></iframe>');
-        loadTab(document.getElementById('html_viewer_freeTab'));
+        if (isnew) loadTab(document.getElementById('html_viewer_freeTab'));
         return true;
       } else {
         new Notification({
@@ -112,7 +113,7 @@ realtime_plugin.getData(function(data){
        } else {
         new Notification({
           title:'Invalid screen',
-          content: 'Please an valid screen'
+          content: 'Please select a valid screen (.html file)'
         });
        }
     }
@@ -132,9 +133,12 @@ realtime_plugin.getData(function(data){
   document.addEventListener("tab_closed",function(e){
       if (e.detail.tab.id=='html_viewer_freeTab') {
         defaultData();
-      } else if (e.detail.tab.longpath==data.path && data.path) {
-        hide_viewer();
-        defaultData(true);
+      } else {
+        var lpath = e.detail.tab.attributes.getNamedItem('longpath');
+        if (lpath && lpath.value == data.path) {
+          hide_viewer();
+          defaultData(true);
+        }
       }
   })
   
