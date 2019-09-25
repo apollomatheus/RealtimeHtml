@@ -23,18 +23,6 @@ realtime_plugin.getData(function(data){
   }
   defaultData(true);
 
-  const openFileName = function (filename,cb,throwError=false) {
-    try {
-      fs.readFile(filename, 'utf8', function (
-        err,data
-      ) {
-        if (err) console.error(err);
-        else cb(data);
-      });
-    } catch (e) {
-      if (throwError) console.error(e);
-    }
-  };
   
   // get file screen 
   const update_screen = function () {
@@ -65,7 +53,7 @@ realtime_plugin.getData(function(data){
             name:'HTML VIEWER',
             data:''
         });
-      };
+      }
       realtime_plugin.setData('open',true);
     }
   };
@@ -95,7 +83,7 @@ realtime_plugin.getData(function(data){
       } else {
         new Notification({
           title:'Invalid file',
-          content: 'Please open an .html file'
+          content: 'Please open .html file'
         });
       }
     }
@@ -154,7 +142,6 @@ realtime_plugin.getData(function(data){
        "Reload viewer":{
     	  id:"realtime-html-reload",
           click:function() {
-            //do not use reload_viewer
             if (show_viewer && data.path && data.enabled) {
            		show_viewer(data.path);
             }
